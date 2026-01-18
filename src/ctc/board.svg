@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="500">
+    <style>
+        .stud { fill: white; }
+        .stud.selected { fill: hotpink; }
+        .tri { }
+        .tri.up { fill: #444; }
+        .tri.down { fill: #333; }
+        .tri.selected { fill: hotpink; }
+        .label { pointer-events: none; font-size: 8px; font-family: Verdana; fill: blue; }
+        .band { stroke: white; stroke-width: 4; }
+        svg { background-color: black; }
+    </style>
+  <path class="tri up" d="M 220 20 L 195 63 L 245 63 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 245 63 L 195 63 L 220 107 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 195 63 L 170 107 L 220 107 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 220 107 L 170 107 L 195 150 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 245 63 L 220 107 L 270 107 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 270 107 L 220 107 L 245 150 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 170 107 L 145 150 L 195 150 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 195 150 L 145 150 L 170 193 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 220 107 L 195 150 L 245 150 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 245 150 L 195 150 L 220 193 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 270 107 L 245 150 L 295 150 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 295 150 L 245 150 L 270 193 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 145 150 L 120 193 L 170 193 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 170 193 L 120 193 L 145 237 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 195 150 L 170 193 L 220 193 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 220 193 L 170 193 L 195 237 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 245 150 L 220 193 L 270 193 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 270 193 L 220 193 L 245 237 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 295 150 L 270 193 L 320 193 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 320 193 L 270 193 L 295 237 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 120 193 L 95 237 L 145 237 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 145 237 L 95 237 L 120 280 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 170 193 L 145 237 L 195 237 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 195 237 L 145 237 L 170 280 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 220 193 L 195 237 L 245 237 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 245 237 L 195 237 L 220 280 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 270 193 L 245 237 L 295 237 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 295 237 L 245 237 L 270 280 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 320 193 L 295 237 L 345 237 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 345 237 L 295 237 L 320 280 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 95 237 L 70 280 L 120 280 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 120 280 L 70 280 L 95 323 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 145 237 L 120 280 L 170 280 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 170 280 L 120 280 L 145 323 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 195 237 L 170 280 L 220 280 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 220 280 L 170 280 L 195 323 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 245 237 L 220 280 L 270 280 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 270 280 L 220 280 L 245 323 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 295 237 L 270 280 L 320 280 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 320 280 L 270 280 L 295 323 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 345 237 L 320 280 L 370 280 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 370 280 L 320 280 L 345 323 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 70 280 L 45 323 L 95 323 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 95 323 L 45 323 L 70 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 120 280 L 95 323 L 145 323 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 145 323 L 95 323 L 120 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 170 280 L 145 323 L 195 323 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 195 323 L 145 323 L 170 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 220 280 L 195 323 L 245 323 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 245 323 L 195 323 L 220 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 270 280 L 245 323 L 295 323 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 295 323 L 245 323 L 270 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 320 280 L 295 323 L 345 323 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 345 323 L 295 323 L 320 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 370 280 L 345 323 L 395 323 Z" onclick='select(evt)'/>
+  <path class="tri down" d="M 395 323 L 345 323 L 370 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 45 323 L 20 366 L 70 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 95 323 L 70 366 L 120 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 145 323 L 120 366 L 170 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 195 323 L 170 366 L 220 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 245 323 L 220 366 L 270 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 295 323 L 270 366 L 320 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 345 323 L 320 366 L 370 366 Z" onclick='select(evt)'/>
+  <path class="tri up" d="M 395 323 L 370 366 L 420 366 Z" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="220" cy="20" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="195" cy="63" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="245" cy="63" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="170" cy="107" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="220" cy="107" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="270" cy="107" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="145" cy="150" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="195" cy="150" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="245" cy="150" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="295" cy="150" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="120" cy="193" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="170" cy="193" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="220" cy="193" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="270" cy="193" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="320" cy="193" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="95" cy="237" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="145" cy="237" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="195" cy="237" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="245" cy="237" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="295" cy="237" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="345" cy="237" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="70" cy="280" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="120" cy="280" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="170" cy="280" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="220" cy="280" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="270" cy="280" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="320" cy="280" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="370" cy="280" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="45" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="95" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="145" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="195" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="245" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="295" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="345" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="395" cy="323" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="20" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="70" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="120" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="170" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="220" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="270" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="320" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="370" cy="366" onclick='select(evt)'/>
+  <circle class="stud" r="4" cx="420" cy="366" onclick='select(evt)'/>
+    <line class="band" x1="245" y1="63" x2="320" y2="193"/>
+    <line class="band" x1="220" y1="193" x2="145" y2="323"/>
+    <line class="band" x1="195" y1="323" x2="345" y2="323"/>
+    <script type="text/ecmascript"><![CDATA[
+        let selected = undefined
+        function select(evt) {
+            var target=evt.target;
+
+            var next = target == selected ? undefined : target;
+            var prev = selected;
+            
+            prev?.classList.remove('selected');
+            next?.classList.add('selected');
+
+            selected = next;
+        }
+        ]]>
+    </script>
+</svg>
