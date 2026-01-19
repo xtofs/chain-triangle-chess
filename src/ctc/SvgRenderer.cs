@@ -4,14 +4,11 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
 {
 
 
-    public void Render((Stud, Stud)[] bands, Peg[] pegs)
+    public void Render(TriangleChessGame game) // (Stud, Stud)[] bands, Peg[] pegs)
     {
-        // private static void CreateSvg(TriangleGeometry geom, (Stud, Stud)[] bands, Peg[] pegs, string path)
-        // {
         using var writer = File.CreateText(Path);
 
         writer.WriteLine("""<?xml version="1.0" encoding="UTF-8"?>""");
-        // writer.WriteLine("""<!DOCTYPE svg>""");
         writer.WriteLine("""<svg xmlns="http://www.w3.org/2000/svg" width="600" height="500">""");
         writer.WriteLine(STYLE);
 
@@ -19,9 +16,9 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
 
         DrawStuds(writer);
 
-        DrawBands(writer, bands);
+        DrawBands(writer, game.Bands);
 
-        DrawPegs(writer, pegs);
+        DrawPegs(writer, game.Pegs);
 
         writer.WriteLine(SCRIPT);
 

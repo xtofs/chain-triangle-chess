@@ -8,7 +8,7 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-        var geom = new TriangleGeometry(8, 50, 20, 20);
+        var geom = new TriangleGeometry(9, 50, 20, 20);
         var renderer = new SvgRenderer(geom, "board.svg");
 
         var bands = new (Stud, Stud)[]
@@ -22,12 +22,18 @@ internal static class Program
         var pegs = new Peg[]
         {
             (6, 3, "red"),
+
+            (0, 0, "hotpink"),
+            (8, 0, "hotpink"),
+            (8, 15, "hotpink"),
+
             // (5, 2, "blue"),
             // (7, 4, "green"),
             // (4, 1, "orange"),
         };
+        var game = new TriangleChessGame(bands, pegs);
 
-        renderer.Render(bands, pegs);
+        renderer.Render(game);
         Console.WriteLine($"Wrote svg file to {renderer.Path}");
     }
 }
