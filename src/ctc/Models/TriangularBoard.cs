@@ -1,10 +1,15 @@
 namespace Models;
 
+using System.Collections.Generic;
+using System.Numerics;
+
 public class TriangleBoard
 {
     private readonly int _size;
 
     private Dictionary<TriangleCoord, Triangle> triangles = new();
+
+    public TriangleGeometry Geometry { get; }
 
     public TriangleBoard(int rows)
     {
@@ -12,6 +17,12 @@ public class TriangleBoard
         // InitializeStuds(rows);
         // ConnectStuds();
         // CreateTriangles();
+    }
+
+    public TriangleBoard(TriangleGeometry geom)
+    {
+        Geometry = geom;
+        _size = geom.Size;
     }
 
     // ... previous stud initialization code ...
@@ -126,6 +137,64 @@ public class TriangleBoard
     // {
     //     return triangles.Keys;
     // }
+
+    public IEnumerable<Stud> Studs
+    {
+        get
+        {
+            for (int row = 0; row < _size + 1; row++)
+            {
+                for (int col = 0; col <= row; col++)
+                {
+                    yield return new Stud(row, col);
+                }
+            }
+        }
+    }
+
+    public IEnumerable<Peg> GetPegs(int maxRow = 0)
+    {
+        if (maxRow == 0) { maxRow = _size; }
+        for (int row = 0; row < maxRow; row++)
+        {
+            for (int col = 0; col <= 2 * row; col++)
+            {
+                yield return new Peg(row, col);
+            }
+        }
+    }
+
+    public TriangleCoord PegToTriangleCoord(Peg peg)
+    {
+        var triangleCol = peg.Col / 2;
+
+        if (peg.Col % 2 == 0)
+        {
+            return new TriangleCoord(peg.Row, triangleCol, true);
+        }
+        else
+        {
+            return new TriangleCoord(peg.Row - 1, triangleCol, false);
+        }
+    }
+
+    public Peg TriangleCoordToPeg(TriangleCoord triangle)
+    {
+        if (triangle.PointUp)
+        {
+            return new Peg(triangle.Row, triangle.Col * 2);
+        }
+        else
+        {
+            return new Peg(triangle.Row + 1, triangle.Col * 2 + 1);
+        }
+    }
+
+    public Vector2 PegToPixel(Peg peg)
+    {
+        var triangle = PegToTriangleCoord(peg);
+        return Geometry!.GetTriangleCenter(triangle);
+    }
 
     // public IEnumerable<TriangleCoord> EnumerateTriangles(int gridSize)
     // {

@@ -1,8 +1,7 @@
 using Models;
 
-public record SvgRenderer(TriangleGeometry geom, string Path)
+public record SvgRenderer(TriangleBoard board, string Path)
 {
-
 
     public void Render(TriangleChessGame game) // (Stud, Stud)[] bands, Peg[] pegs)
     {
@@ -14,9 +13,9 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
 
         DrawTriangles(writer);
 
-        DrawStuds(writer);
-
         DrawBands(writer, game.Bands);
+
+        DrawStuds(writer);
 
         DrawPegs(writer, game.Pegs);
 
@@ -27,7 +26,7 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
 
     private void DrawTriangles(StreamWriter writer)
     {
-        foreach (var t in geom.TriangleCoords)
+        foreach (var t in board.Geometry!.TriangleCoords)
         {
             var path = CreateTriangleSvgPath(t);
             var d = t.PointUp ? "up" : "down";
@@ -40,8 +39,8 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
     {
         foreach (var band in bands)
         {
-            var p = geom.StudToPixel(band.Item1);
-            var q = geom.StudToPixel(band.Item2);
+            var p = board.Geometry!.StudToPixel(band.Item1);
+            var q = board.Geometry!.StudToPixel(band.Item2);
             writer.WriteLine($"""    <line class="band" x1="{p.X:f0}" y1="{p.Y:f0}" x2="{q.X:f0}" y2="{q.Y:f0}"/>""");
         }
     }
@@ -49,10 +48,10 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
     private void DrawStuds(StreamWriter writer)
     {
         // draw studs
-        foreach (var stud in geom.Studs)
+        foreach (var stud in board.Studs)
         {
-            var px = geom.StudToPixel(stud);
-            writer.WriteLine($"""  <circle class="stud" r="4" cx="{px.X:f0}" cy="{px.Y:f0}" onclick='select(evt)'/>""");
+            var px = board.Geometry!.StudToPixel(stud);
+            writer.WriteLine($"""  <circle class=\"stud\" r=\"4\" cx=\"{px.X:f0}\" cy=\"{px.Y:f0}\" onclick='select(evt)'/>""");
         }
     }
 
@@ -62,15 +61,19 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
         foreach (var peg in pegs)
         {
             var style = string.IsNullOrEmpty(peg.Tag) ? "" : $"style=\"fill:{peg.Tag}\" ";
-            var px = geom.PegToPixel(peg);
+            var px = board.PegToPixel(peg);
             writer.WriteLine($"  <circle class=\"peg\" {style} r=\"10\" cx=\"{px.X:f0}\" cy=\"{px.Y:f0}\" onclick='select(evt)'/>");
-            writer.WriteLine($"  <text class=\"label\" x=\"{px.X - 7:f0}\" y=\"{px.Y + 2:f0}\">{peg.Row},{peg.Col}</text>");
+
+            var txt = $"{Alpha(peg.Col)}{peg.Row}";
+            writer.WriteLine($"""  <text class="label" x="{px.X:f0}" y="{px.Y:f0}" >{txt}</text>""");
         }
+
+        static char Alpha(int v) => (char)(v + 'a');
     }
 
     private string CreateTriangleSvgPath(TriangleCoord t)
     {
-        var corners = geom.GetTriangleCorners(t);
+        var corners = board.Geometry!.GetTriangleCorners(t);
         var path = $"M {corners[0].X:f0} {corners[0].Y:f0} L {corners[1].X:f0} {corners[1].Y:f0} L {corners[2].X:f0} {corners[2].Y:f0} Z";
         return path;
     }
@@ -95,14 +98,23 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
 
     private static readonly string STYLE = """
             <style>
-                .stud { fill: white; }
+                .stud { fill: salmon; }
                 .stud.selected { fill: hotpink; }
+
                 .tri { }
                 .tri.up { fill: #444; }
                 .tri.down { fill: #333; }
                 .tri.selected { fill: hotpink; }
-                .label { pointer-events: none; fill: white; font-size: 8px; font-family: Verdana; }
-                .band { stroke: white; stroke-width: 4; }
+                .label { 
+                    pointer-events: none; 
+                    fill: white; 
+                    font-size: 8px; 
+                    font-family: Verdana; 
+                    
+                    text-anchor: middle; 
+                    dominant-baseline: middle;
+                }
+                .band { stroke: white; stroke-width: 5; }
                 .peg { fill: hotpink; }
                 svg { background-color: black; }
             </style>

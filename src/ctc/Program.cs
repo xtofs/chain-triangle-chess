@@ -9,7 +9,8 @@ internal static class Program
     private static void Main(string[] args)
     {
         var geom = new TriangleGeometry(9, 50, 20, 20);
-        var renderer = new SvgRenderer(geom, "board.svg");
+        var board = new TriangleBoard(geom);
+        var renderer = new SvgRenderer(board, "board.svg");
 
         var bands = new (Stud, Stud)[]
         {
@@ -24,9 +25,12 @@ internal static class Program
             (6, 3, "red"),
 
 
-            // (0, 0, "hotpink"),
-            // (8, 0, "hotpink"),
-            // (8, 16, "hotpink"),
+            (0, 0, "hotpink"),
+            (8, 0, "hotpink"),
+
+            (8, 9, "hotpink"),
+            (8, 10, "hotpink"),
+            (8, 16, "hotpink"),
 
         };
         var game = new TriangleChessGame(bands, pegs);

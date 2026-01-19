@@ -11,20 +11,9 @@ public class TriangleGeometry(int size, float spacing, float offsetX, float offs
     public float OffsetX { get; } = offsetX;
     public float OffsetY { get; } = offsetY;
 
-    public IEnumerable<Stud> Studs
-    {
-        get
-        {
-            // 0 to N inclusive because studs are at the corners of triangles
-            for (int row = 0; row < Size + 1; row++)
-            {
-                for (int col = 0; col <= row; col++)
-                {
-                    yield return new Stud(row, col);
-                }
-            }
-        }
-    }
+    private readonly float triangleHeight = spacing * MathF.Sqrt(3) / 2f;
+
+    // Stud enumeration moved to TriangleBoard
 
     public IEnumerable<TriangleCoord> TriangleCoords
     {
@@ -44,26 +33,6 @@ public class TriangleGeometry(int size, float spacing, float offsetX, float offs
             }
         }
     }
-
-    public IEnumerable<Peg> GetPegs(int maxRow = 0)
-    {
-        if (maxRow == 0) { maxRow = Size; }
-        // Pegs are numbered sequentially by row, with each row having 2*row + 1 pegs
-        // Row 0: (0,0) - 1 peg
-        // Row 1: (1,0), (1,1), (1,2) - 3 pegs
-        // Row 2: (2,0), (2,1), (2,2), (2,3), (2,4) - 5 pegs
-        // etc.
-        for (int row = 0; row < maxRow; row++)
-        {
-            for (int col = 0; col <= 2 * row; col++)
-            {
-                yield return new Peg(row, col);
-            }
-        }
-    }
-
-    private readonly float triangleHeight = spacing * MathF.Sqrt(3) / 2f;
-
 
     /// <summary>
     /// Convert a stud coordinate to pixel coordinates.
@@ -113,53 +82,13 @@ public class TriangleGeometry(int size, float spacing, float offsetX, float offs
         return result;
     }
 
-    public TriangleCoord PegToTriangleCoord(Peg peg)
+    public Vector2 GetTriangleCenter(TriangleCoord triangle)
     {
-        var triangleCol = peg.Col / 2;
-
-        if (peg.Col % 2 == 0)
-        {
-            return new TriangleCoord(peg.Row, triangleCol, true);
-        }
-        else
-        {
-            return new TriangleCoord(peg.Row - 1, triangleCol, false);
-        }
+        var corners = GetTriangleCorners(triangle);
+        return (corners[0] + corners[1] + corners[2]) / 3;
     }
 
-    public Peg TriangleCoordToPeg(TriangleCoord triangle)
-    {
-        if (triangle.PointUp)
-        {
-            return new Peg(triangle.Row, triangle.Col * 2);
-        }
-        else
-        {
-            return new Peg(triangle.Row + 1, triangle.Col * 2 + 1);
-        }
-    }
+    // Peg/triangle mapping moved to TriangleBoard
 
-    public Vector2 PegToPixel(Peg peg)
-    {
-        // Direct calculation: center of the three studs that form the peg's triangle
-        var triangleCol = peg.Col / 2;
-        Vector2 stud1, stud2, stud3;
-
-        if (peg.Col % 2 == 0)
-        {
-            // Point-up triangle
-            stud1 = StudToPixel(new Stud(peg.Row, triangleCol));
-            stud2 = StudToPixel(new Stud(peg.Row + 1, triangleCol));
-            stud3 = StudToPixel(new Stud(peg.Row + 1, triangleCol + 1));
-        }
-        else
-        {
-            // Point-down triangle
-            stud1 = StudToPixel(new Stud(peg.Row, triangleCol + 1));
-            stud2 = StudToPixel(new Stud(peg.Row, triangleCol));
-            stud3 = StudToPixel(new Stud(peg.Row + 1, triangleCol + 1));
-        }
-
-        return (stud1 + stud2 + stud3) / 3;
-    }
+    // PegToPixel moved to TriangleBoard (uses TriangleBoard.PegToTriangleCoord and Geometry.GetTriangleCenter)
 }
