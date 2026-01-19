@@ -23,13 +23,11 @@ internal static class Program
         {
             (6, 3, "red"),
 
-            (0, 0, "hotpink"),
-            (8, 0, "hotpink"),
-            (8, 16, "hotpink"),
 
-            // (5, 2, "blue"),
-            // (7, 4, "green"),
-            // (4, 1, "orange"),
+            // (0, 0, "hotpink"),
+            // (8, 0, "hotpink"),
+            // (8, 16, "hotpink"),
+
         };
         var game = new TriangleChessGame(bands, pegs);
 
