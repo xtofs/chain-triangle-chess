@@ -26,7 +26,7 @@ public record SvgRenderer(TriangleBoard board, string Path)
 
     private void DrawTriangles(StreamWriter writer)
     {
-        foreach (var t in board.Geometry!.TriangleCoords)
+        foreach (var t in board.Geometry!.TrianglePositions)
         {
             var path = CreateTriangleSvgPath(t);
             var d = t.PointUp ? "up" : "down";
