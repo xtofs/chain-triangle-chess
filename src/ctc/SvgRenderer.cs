@@ -32,7 +32,7 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
             var path = CreateTriangleSvgPath(t);
             var d = t.PointUp ? "up" : "down";
 
-            writer.WriteLine($"""  <path class="tri {d}" d="{path}" onclick='select(evt)'/>""");
+            writer.WriteLine($"  <path class=\"tri {d}\" d=\"{path}\" onclick='select(evt)'/>");
         }
     }
 
@@ -61,17 +61,17 @@ public record SvgRenderer(TriangleGeometry geom, string Path)
         // draw pegs
         foreach (var peg in pegs)
         {
-            var style = string.IsNullOrEmpty(peg.Tag) ? "" : $"""style="fill:{peg.Tag}" """;
+            var style = string.IsNullOrEmpty(peg.Tag) ? "" : $"style=\"fill:{peg.Tag}\" ";
             var px = geom.PegToPixel(peg);
-            writer.WriteLine($"""  <circle class="peg" {style} r="10" cx="{px.X:f0}" cy="{px.Y:f0}" onclick='select(evt)'/>""");
-            writer.WriteLine($"""  <text class="label" x="{px.X - 7:f0}" y="{px.Y + 2:f0}">{peg.Row},{peg.Col}</text>""");
+            writer.WriteLine($"  <circle class=\"peg\" {style} r=\"10\" cx=\"{px.X:f0}\" cy=\"{px.Y:f0}\" onclick='select(evt)'/>");
+            writer.WriteLine($"  <text class=\"label\" x=\"{px.X - 7:f0}\" y=\"{px.Y + 2:f0}\">{peg.Row},{peg.Col}</text>");
         }
     }
 
     private string CreateTriangleSvgPath(TriangleCoord t)
     {
         var corners = geom.GetTriangleCorners(t);
-        var path = $"""M {corners[0].X:f0} {corners[0].Y:f0} L {corners[1].X:f0} {corners[1].Y:f0} L {corners[2].X:f0} {corners[2].Y:f0} Z""";
+        var path = $"M {corners[0].X:f0} {corners[0].Y:f0} L {corners[1].X:f0} {corners[1].Y:f0} L {corners[2].X:f0} {corners[2].Y:f0} Z";
         return path;
     }
 
