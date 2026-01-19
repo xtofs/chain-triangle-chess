@@ -1,6 +1,6 @@
 namespace Models;
 
-public record TriangleChessGame((Stud, Stud)[] Bands, Peg[] Pegs)
+public record TriangleBoard((Vertex, Vertex)[] Bands, Piece[] Pegs)
 {
 
 }

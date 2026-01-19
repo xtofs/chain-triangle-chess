@@ -9,10 +9,10 @@ internal static class Program
     private static void Main(string[] args)
     {
         var geom = new TriangleGeometry(9, 50, 20, 20);
-        var board = new TriangleBoard(geom);
-        var renderer = new SvgRenderer(board, "board.svg");
+        // var board = new TriangleBoard(geom.Size);
+        var renderer = new SvgRenderer(geom, "board.svg");
 
-        var bands = new (Stud, Stud)[]
+        var bands = new (Vertex, Vertex)[]
         {
             ((1,1), (4,4)),
             ((4,2), (7,2)),
@@ -20,20 +20,16 @@ internal static class Program
             ((5,0), (8,3)),
         };
 
-        var pegs = new Peg[]
+        var pegs = new Piece[]
         {
             (6, 3, "red"),
 
-
-            (0, 0, "hotpink"),
-            (8, 0, "hotpink"),
-
-            (8, 9, "hotpink"),
-            (8, 10, "hotpink"),
-            (8, 16, "hotpink"),
-
+            // to validate the corners of the board
+            // (0, 0, "hotpink"),
+            // (8, 0, "hotpink"),
+            // (8, 16, "hotpink"),
         };
-        var game = new TriangleChessGame(bands, pegs);
+        var game = new TriangleBoard(bands, pegs);
 
         renderer.Render(game);
         Console.WriteLine($"Wrote svg file to {renderer.Path}");

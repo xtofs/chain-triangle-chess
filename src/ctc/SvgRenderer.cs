@@ -1,9 +1,9 @@
 using Models;
 
-public record SvgRenderer(TriangleBoard board, string Path)
+public record SvgRenderer(TriangleGeometry Geometry, string Path)
 {
 
-    public void Render(TriangleChessGame game) // (Stud, Stud)[] bands, Peg[] pegs)
+    public void Render(TriangleBoard game)
     {
         using var writer = File.CreateText(Path);
 
@@ -13,9 +13,9 @@ public record SvgRenderer(TriangleBoard board, string Path)
 
         DrawTriangles(writer);
 
-        DrawBands(writer, game.Bands);
+        DrawVertices(writer);
 
-        DrawStuds(writer);
+        DrawBands(writer, game.Bands);
 
         DrawPegs(writer, game.Pegs);
 
@@ -26,46 +26,64 @@ public record SvgRenderer(TriangleBoard board, string Path)
 
     private void DrawTriangles(StreamWriter writer)
     {
-        foreach (var t in board.Geometry!.TrianglePositions)
+        foreach (var t in Geometry.TrianglePositions)
         {
             var path = CreateTriangleSvgPath(t);
             var d = t.PointUp ? "up" : "down";
 
-            writer.WriteLine($"  <path class=\"tri {d}\" d=\"{path}\" onclick='select(evt)'/>");
+            writer.WriteLine($"""    <path class="tri {d}" d="{path}" onclick='select(evt)'/>""");
+
+#if ALL_LABELS
+            var center = Geometry.GetTriangleCenter(t);
+            var label = $"{(char)('a' + t.Index / 2)}{t.Row}";
+            writer.WriteLine($"""    <text class="label" x="{center.X:f0}" y="{center.Y:f0}">{label}</text>""");
+#endif
         }
     }
 
-    private void DrawBands(StreamWriter writer, (Stud, Stud)[] bands)
+    private void DrawBands(StreamWriter writer, (Vertex, Vertex)[] bands)
     {
         foreach (var band in bands)
         {
-            var p = board.Geometry!.StudToPixel(band.Item1);
-            var q = board.Geometry!.StudToPixel(band.Item2);
+            var p = Geometry.VertexToPixel(band.Item1);
+            var q = Geometry.VertexToPixel(band.Item2);
             writer.WriteLine($"""    <line class="band" x1="{p.X:f0}" y1="{p.Y:f0}" x2="{q.X:f0}" y2="{q.Y:f0}"/>""");
         }
     }
 
-    private void DrawStuds(StreamWriter writer)
+    /// <summary>
+    /// Draw all Vertices on the board.
+    /// </summary>
+    private void DrawVertices(StreamWriter writer)
     {
-        // draw studs
-        foreach (var stud in board.Studs)
+        foreach (var vertex in GetVertices(Geometry.Size))
         {
-            var px = board.Geometry!.StudToPixel(stud);
-            writer.WriteLine($"""  <circle class=\"stud\" r=\"4\" cx=\"{px.X:f0}\" cy=\"{px.Y:f0}\" onclick='select(evt)'/>""");
+            var px = Geometry.VertexToPixel(vertex);
+            writer.WriteLine($"""    <circle class="vertex" r="4" cx="{px.X:f0}" cy="{px.Y:f0}" onclick="select(evt)"/>""");
+        }
+
+        static IEnumerable<Vertex> GetVertices(int size)
+        {
+            for (int row = 0; row < size + 1; row++)
+            {
+                for (int col = 0; col <= row; col++)
+                {
+                    yield return new Vertex(row, col);
+                }
+            }
         }
     }
 
-    private void DrawPegs(StreamWriter writer, Peg[] pegs)
+    private void DrawPegs(StreamWriter writer, Piece[] pegs)
     {
-        // draw pegs
         foreach (var peg in pegs)
         {
-            var style = string.IsNullOrEmpty(peg.Tag) ? "" : $"style=\"fill:{peg.Tag}\" ";
-            var px = board.PegToPixel(peg);
-            writer.WriteLine($"  <circle class=\"peg\" {style} r=\"10\" cx=\"{px.X:f0}\" cy=\"{px.Y:f0}\" onclick='select(evt)'/>");
+            var style = string.IsNullOrEmpty(peg.Tag) ? "" : $"""style="fill:{peg.Tag}" """;
+            var px = Geometry.GetTriangleCenter(peg.Position);
+            writer.WriteLine($"""    <circle class="peg" {style} r="10" cx="{px.X:f0}" cy="{px.Y:f0}" onclick="select(evt)"/>""");
 
-            var txt = $"{Alpha(peg.Col)}{peg.Row}";
-            writer.WriteLine($"""  <text class="label" x="{px.X:f0}" y="{px.Y:f0}" >{txt}</text>""");
+            var txt = $"{Alpha(peg.Position.Index)}{peg.Position.Row}";
+            writer.WriteLine($"""    <text class="label" x="{px.X:f0}" y="{px.Y:f0}" >{txt}</text>""");
         }
 
         static char Alpha(int v) => (char)(v + 'a');
@@ -73,7 +91,7 @@ public record SvgRenderer(TriangleBoard board, string Path)
 
     private string CreateTriangleSvgPath(Position pos)
     {
-        var corners = board.Geometry!.GetTriangleCorners(pos);
+        var corners = Geometry.GetTriangleCorners(pos);
         var path = $"M {corners[0].X:f0} {corners[0].Y:f0} L {corners[1].X:f0} {corners[1].Y:f0} L {corners[2].X:f0} {corners[2].Y:f0} Z";
         return path;
     }
@@ -98,9 +116,8 @@ public record SvgRenderer(TriangleBoard board, string Path)
 
     private static readonly string STYLE = """
             <style>
-                .stud { fill: salmon; }
-                .stud.selected { fill: hotpink; }
-
+                .vertex { fill: #aaa; }
+                .vertex.selected { fill: hotpink; }
                 .tri { }
                 .tri.up { fill: #444; }
                 .tri.down { fill: #333; }
@@ -110,11 +127,10 @@ public record SvgRenderer(TriangleBoard board, string Path)
                     fill: white; 
                     font-size: 8px; 
                     font-family: Verdana; 
-                    
                     text-anchor: middle; 
                     dominant-baseline: middle;
                 }
-                .band { stroke: white; stroke-width: 5; }
+                .band { stroke: white; stroke-width: 4; stroke-linecap: round; }
                 .peg { fill: hotpink; }
                 svg { background-color: black; }
             </style>
