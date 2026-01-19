@@ -15,20 +15,16 @@ public class TriangleGeometry(int size, float spacing, float offsetX, float offs
 
     // Stud enumeration moved to TriangleBoard
 
-    public IEnumerable<TriangleCoord> TriangleCoords
+    public IEnumerable<Position> TrianglePositions
     {
         get
         {
-            // 0 to N inclusive because studs are at the corners of triangles
+            // enumerate compact positions: for each row, indices 0..2*row
             for (int row = 0; row < Size; row++)
             {
-                for (int col = 0; col <= row; col++)
+                for (int index = 0; index <= 2 * row; index++)
                 {
-                    yield return new TriangleCoord(row, col, true);
-                    if (row != Size - 1)
-                    {
-                        yield return new TriangleCoord(row, col, false);
-                    }
+                    yield return new Position(row, index);
                 }
             }
         }
@@ -62,27 +58,34 @@ public class TriangleGeometry(int size, float spacing, float offsetX, float offs
         return new Stud(row, col);
     }
 
-    public Vector2[] GetTriangleCorners(TriangleCoord triangle)
+    public Vector2[] GetTriangleCorners(Position triangle)
     {
         var result = new Vector2[3];
 
+        // derive the equivalent TriangleCoord (row,col,pointUp) from compact Position
+        var row = triangle.Row;
+        var index = triangle.Index;
+        var col = index / 2;
+
         if (triangle.PointUp)
         {
-            result[0] = StudToPixel(new Stud(triangle.Row, triangle.Col));
-            result[1] = StudToPixel(new Stud(triangle.Row + 1, triangle.Col));
-            result[2] = StudToPixel(new Stud(triangle.Row + 1, triangle.Col + 1));
+            // corresponds to TriangleCoord(row, col, true)
+            result[0] = StudToPixel(new Stud(row, col));
+            result[1] = StudToPixel(new Stud(row + 1, col));
+            result[2] = StudToPixel(new Stud(row + 1, col + 1));
         }
         else
         {
-            result[0] = StudToPixel(new Stud(triangle.Row + 1, triangle.Col + 1));
-            result[1] = StudToPixel(new Stud(triangle.Row + 1, triangle.Col));
-            result[2] = StudToPixel(new Stud(triangle.Row + 2, triangle.Col + 1));
+            // corresponds to TriangleCoord(row-1, col, false)
+            result[0] = StudToPixel(new Stud(row, col + 1));
+            result[1] = StudToPixel(new Stud(row, col));
+            result[2] = StudToPixel(new Stud(row + 1, col + 1));
         }
 
         return result;
     }
 
-    public Vector2 GetTriangleCenter(TriangleCoord triangle)
+    public Vector2 GetTriangleCenter(Position triangle)
     {
         var corners = GetTriangleCorners(triangle);
         return (corners[0] + corners[1] + corners[2]) / 3;

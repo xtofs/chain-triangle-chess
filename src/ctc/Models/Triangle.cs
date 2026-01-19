@@ -1,8 +1,8 @@
 namespace Models;
 
-public class Triangle(TriangleCoord coord, bool value)
+public class Triangle(Position coord, bool value)
 {
-    public TriangleCoord Coord { get; } = coord;
+    public Position Coord { get; } = coord;
     private readonly bool Value = value;
 }
 

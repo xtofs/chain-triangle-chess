@@ -71,9 +71,9 @@ public record SvgRenderer(TriangleBoard board, string Path)
         static char Alpha(int v) => (char)(v + 'a');
     }
 
-    private string CreateTriangleSvgPath(TriangleCoord t)
+    private string CreateTriangleSvgPath(Position pos)
     {
-        var corners = board.Geometry!.GetTriangleCorners(t);
+        var corners = board.Geometry!.GetTriangleCorners(pos);
         var path = $"M {corners[0].X:f0} {corners[0].Y:f0} L {corners[1].X:f0} {corners[1].Y:f0} L {corners[2].X:f0} {corners[2].Y:f0} Z";
         return path;
     }
