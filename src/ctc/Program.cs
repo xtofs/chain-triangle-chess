@@ -25,7 +25,7 @@ internal static class Program
 
             (0, 0, "hotpink"),
             (8, 0, "hotpink"),
-            (8, 15, "hotpink"),
+            (8, 16, "hotpink"),
 
             // (5, 2, "blue"),
             // (7, 4, "green"),
