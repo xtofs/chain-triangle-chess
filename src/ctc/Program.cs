@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Models;
+using ctc.Rendering;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +47,7 @@ app.MapPost("/api/place-band/{vertex1}/{vertex2}", PlaceBand);
 
 app.Run();
 
-IResult GetReachableVertices(Vertex vertex, ITriangleGrid grid)
+IResult GetReachableVertices(Vertex vertex, TriangleGrid grid)
 {
     var reachable = grid.GetReachableVertices(vertex);
     return Results.Json(reachable.Select(v => new { v.Row, v.Col }));

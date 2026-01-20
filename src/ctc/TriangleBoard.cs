@@ -1,10 +1,12 @@
 namespace Models;
 
-public class TriangleBoard(ITriangleGrid grid)
+public class TriangleBoard(TriangleGrid grid)
 {
-    private readonly ITriangleGrid _grid = grid;
-    private List<(Vertex, Vertex)> _bands = [];
-    private List<Piece> _pegs = [];
+    private readonly TriangleGrid _grid = grid;
+
+    private readonly List<(Vertex, Vertex)> _bands = [];
+
+    private readonly List<Piece> _pegs = [];
 
     static readonly string[] _colorRotation = ["red", "blue", "green"];
 
@@ -142,9 +144,9 @@ public class TriangleBoard(ITriangleGrid grid)
             var path = GetBandPath(from, to);
             for (int i = 0; i < path.Count - 1; i++)
             {
-                var pathV1 = path[i];
-                var pathV2 = path[i + 1];
-                if ((pathV1 == v1 && pathV2 == v2) || (pathV1 == v2 && pathV2 == v1))
+                var vertex1 = path[i];
+                var vertex2 = path[i + 1];
+                if ((vertex1 == v1 && vertex2 == v2) || (vertex1 == v2 && vertex2 == v1))
                 {
                     return true;
                 }

@@ -1,3 +1,5 @@
+namespace ctc.Rendering;
+
 using Models;
 
 public record SvgRenderer(TriangleGeometry Geometry)

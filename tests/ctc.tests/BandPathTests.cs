@@ -1,4 +1,5 @@
 using Models;
+using ctc.Rendering;
 using Xunit;
 
 namespace ctc.Tests;
