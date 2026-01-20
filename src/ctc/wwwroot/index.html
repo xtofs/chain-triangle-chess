@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triangle Chess</title>
+    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Triangle Chess</h1>
+
+        <svg id="board" xmlns="http://www.w3.org/2000/svg" width="600" height="500">
+            <g id="board-static" hx-get="/api/board" hx-trigger="load" hx-swap="none"></g>
+            <g id="board-dynamic" hx-get="/api/game" hx-trigger="load" hx-swap="none"></g>
+        </svg>
+
+        <span id="loading" class="htmx-indicator">Loading...</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

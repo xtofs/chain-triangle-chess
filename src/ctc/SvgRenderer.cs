@@ -1,27 +1,27 @@
 using Models;
 
-public record SvgRenderer(TriangleGeometry Geometry, string Path)
+public record SvgRenderer(TriangleGeometry Geometry)
 {
-
-    public void Render(TriangleBoard game)
+    public async Task RenderStatic(Stream output)
     {
-        using var writer = File.CreateText(Path);
-
-        writer.WriteLine("""<?xml version="1.0" encoding="UTF-8"?>""");
-        writer.WriteLine("""<svg xmlns="http://www.w3.org/2000/svg" width="600" height="500">""");
-        writer.WriteLine(STYLE);
+        using var writer = new StreamWriter(output, leaveOpen: true);
 
         DrawTriangles(writer);
 
         DrawVertices(writer);
 
+        await writer.FlushAsync();
+    }
+
+    public async Task RenderDynamic(Stream output, TriangleBoard game)
+    {
+        using var writer = new StreamWriter(output, leaveOpen: true);
+
         DrawBands(writer, game.Bands);
 
         DrawPegs(writer, game.Pegs);
 
-        writer.WriteLine(SCRIPT);
-
-        writer.WriteLine("""</svg>""");
+        await writer.FlushAsync();
     }
 
     private void DrawTriangles(StreamWriter writer)
@@ -31,7 +31,7 @@ public record SvgRenderer(TriangleGeometry Geometry, string Path)
             var path = CreateTriangleSvgPath(t);
             var d = t.PointUp ? "up" : "down";
 
-            writer.WriteLine($"""    <path class="tri {d}" d="{path}" onclick='select(evt)'/>""");
+            writer.WriteLine($"""    <path class="tri {d}" d="{path}"/>""");
 
 #if ALL_LABELS
             var center = Geometry.GetTriangleCenter(t);
@@ -59,7 +59,7 @@ public record SvgRenderer(TriangleGeometry Geometry, string Path)
         foreach (var vertex in GetVertices(Geometry.Size))
         {
             var px = Geometry.VertexToPixel(vertex);
-            writer.WriteLine($"""    <circle class="vertex" r="4" cx="{px.X:f0}" cy="{px.Y:f0}" onclick="select(evt)"/>""");
+            writer.WriteLine($"""    <circle class="vertex" r="4" cx="{px.X:f0}" cy="{px.Y:f0}"/>""");
         }
 
         static IEnumerable<Vertex> GetVertices(int size)
@@ -95,44 +95,4 @@ public record SvgRenderer(TriangleGeometry Geometry, string Path)
         var path = $"M {corners[0].X:f0} {corners[0].Y:f0} L {corners[1].X:f0} {corners[1].Y:f0} L {corners[2].X:f0} {corners[2].Y:f0} Z";
         return path;
     }
-
-    private static readonly string SCRIPT = """
-            <script type="text/ecmascript"><![CDATA[
-                let selected = undefined
-                function select(evt) {
-                    var target=evt.target;
-
-                    var next = target == selected ? undefined : target;
-                    var prev = selected;
-                    
-                    prev?.classList.remove('selected');
-                    next?.classList.add('selected');
-
-                    selected = next;
-                }
-                ]]>
-            </script>
-        """;
-
-    private static readonly string STYLE = """
-            <style>
-                .vertex { fill: #aaa; }
-                .vertex.selected { fill: hotpink; }
-                .tri { }
-                .tri.up { fill: #444; }
-                .tri.down { fill: #333; }
-                .tri.selected { fill: hotpink; }
-                .label { 
-                    pointer-events: none; 
-                    fill: white; 
-                    font-size: 8px; 
-                    font-family: Verdana; 
-                    text-anchor: middle; 
-                    dominant-baseline: middle;
-                }
-                .band { stroke: white; stroke-width: 4; stroke-linecap: round; }
-                .peg { fill: hotpink; }
-                svg { background-color: black; }
-            </style>
-        """;
 }

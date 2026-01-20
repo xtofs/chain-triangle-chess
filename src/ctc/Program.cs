@@ -1,37 +1,71 @@
-﻿
-
-using System.Numerics;
-using System.Reflection.Emit;
+﻿using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.FileProviders;
 using Models;
 
-internal static class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+
+// Allow synchronous IO for SVG generation
+builder.Services.Configure<KestrelServerOptions>(options =>
 {
-    private static void Main(string[] args)
+    options.AllowSynchronousIO = true;
+});
+
+var app = builder.Build();
+
+var env = app.Services.GetRequiredService<IWebHostEnvironment>();
+
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    FileProvider = new PhysicalFileProvider(env.WebRootPath),
+    DefaultFileNames = new[] { "index.html" }
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(env.WebRootPath),
+    RequestPath = ""
+});
+
+app.MapGet("/api/board", GenerateStaticSvg);
+
+app.MapGet("/api/game", GenerateDynamicSvg);
+
+app.Run();
+
+IResult GenerateStaticSvg()
+{
+    var geom = new TriangleGeometry(9, 50, 20, 20);
+    var renderer = new SvgRenderer(geom);
+
+    return Results.Stream(async (stream) =>
     {
-        var geom = new TriangleGeometry(9, 50, 20, 20);
-        // var board = new TriangleBoard(geom.Size);
-        var renderer = new SvgRenderer(geom, "board.svg");
+        await renderer.RenderStatic(stream);
+    }, contentType: "image/svg+xml");
+}
 
-        var bands = new (Vertex, Vertex)[]
-        {
-            ((1,1), (4,4)),
-            ((4,2), (7,2)),
-            ((6,1), (6,4)),
-            ((5,0), (8,3)),
-        };
+IResult GenerateDynamicSvg()
+{
+    var geom = new TriangleGeometry(9, 50, 20, 20);
+    var renderer = new SvgRenderer(geom);
 
-        var pegs = new Piece[]
-        {
-            (6, 3, "red"),
+    var bands = new (Vertex, Vertex)[]
+    {
+        ((1,1), (4,4)),
+        ((4,2), (7,2)),
+        ((6,1), (6,4)),
+        ((5,0), (8,3)),
+    };
 
-            // to validate the corners of the board
-            // (0, 0, "hotpink"),
-            // (8, 0, "hotpink"),
-            // (8, 16, "hotpink"),
-        };
-        var game = new TriangleBoard(bands, pegs);
+    var pegs = new Piece[]
+    {
+        (6, 3, "red"),
+    };
+    var game = new TriangleBoard(bands, pegs);
 
-        renderer.Render(game);
-        Console.WriteLine($"Wrote svg file to {renderer.Path}");
-    }
+    return Results.Stream(async (stream) =>
+    {
+        await renderer.RenderDynamic(stream, game);
+    }, contentType: "image/svg+xml");
 }
