@@ -60,16 +60,18 @@ public record SvgRenderer(TriangleGeometry Geometry)
         {
             var px = Geometry.VertexToPixel(vertex);
             writer.WriteLine($"""    <circle class="vertex" r="4" cx="{px.X:f0}" cy="{px.Y:f0}"/>""");
+            // Invisible clickable hit zone (larger than visible vertex)
+            writer.WriteLine($"""    <circle class="vertex-hit" r="16" cx="{px.X:f0}" cy="{px.Y:f0}" hx-post="/api/select/{vertex.Row},{vertex.Col}" hx-swap="none"/>""");
         }
+    }
 
-        static IEnumerable<Vertex> GetVertices(int size)
+    static IEnumerable<Vertex> GetVertices(int size)
+    {
+        for (int row = 0; row < size + 1; row++)
         {
-            for (int row = 0; row < size + 1; row++)
+            for (int col = 0; col <= row; col++)
             {
-                for (int col = 0; col <= row; col++)
-                {
-                    yield return new Vertex(row, col);
-                }
+                yield return new Vertex(row, col);
             }
         }
     }

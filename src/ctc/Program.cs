@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.ModelBinderProviders.Insert(0, new VertexModelBinderProvider());
+});
 
 // Allow synchronous IO for SVG generation
 builder.Services.Configure<KestrelServerOptions>(options =>
@@ -32,7 +36,16 @@ app.MapGet("/api/board", GenerateStaticSvg);
 
 app.MapGet("/api/game", GenerateDynamicSvg);
 
+app.MapPost("/api/select/{vertex}", HandleVertexSelect);
+
 app.Run();
+
+IResult HandleVertexSelect(Vertex vertex)
+{
+    Console.WriteLine(vertex);
+    // Just return 200 OK - the frontend will handle visual update via HTMX events
+    return Results.Ok();
+}
 
 IResult GenerateStaticSvg()
 {

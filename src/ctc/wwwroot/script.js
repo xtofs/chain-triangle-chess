@@ -11,6 +11,25 @@ function select(evt) {
     selected = next;
 }
 
+// Handle vertex selection via HTMX
+document.addEventListener('htmx:afterRequest', function (evt) {
+    // Check if this is a select request
+    if (!evt.detail.xhr.responseURL.includes('/api/select/')) return;
+
+    const target = evt.detail.target;
+
+    // For vertex hits, we need to select the associated visible vertex circle
+    // The hit zone is the target, so find the previous sibling vertex circle
+    let vertexCircle = target.previousElementSibling;
+    while (vertexCircle && !vertexCircle.classList.contains('vertex')) {
+        vertexCircle = vertexCircle.previousElementSibling;
+    }
+
+    if (vertexCircle) {
+        select({ target: vertexCircle });
+    }
+}, false);
+
 // Handle SVG content loading via HTMX
 document.addEventListener('htmx:afterRequest', function (evt) {
     const target = evt.detail.target;
@@ -39,6 +58,9 @@ document.addEventListener('htmx:afterRequest', function (evt) {
     for (const child of doc.documentElement.childNodes) {
         target.appendChild(document.importNode(child, true));
     }
+
+    // Tell HTMX to process the newly inserted SVG elements so they respond to hx-* attributes
+    htmx.process(target);
 }, true); // Use capture phase to run early
 
 
