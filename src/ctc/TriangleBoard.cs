@@ -5,17 +5,16 @@ public class TriangleBoard(TriangleGeometry geometry)
     private List<(Vertex, Vertex)> _bands = [];
     private List<Piece> _pegs = [];
 
-    static readonly string[] colorRotation = ["red", "blue", "green"];
-    private int _colorIndex = 0;
-    private string _currentColor = "red";
+    static readonly string[] _colorRotation = ["red", "blue", "green"];
+
+    private int _currentColorIndex = 0;
+
+    public string CurrentColor => _colorRotation[_currentColorIndex];
 
     public IReadOnlyList<(Vertex, Vertex)> Bands => _bands;
+
     public IReadOnlyList<Piece> Pegs => _pegs;
-    public string CurrentColor
-    {
-        get => _currentColor;
-        set => _currentColor = value;
-    }
+
 
     public void AddBand(Vertex from, Vertex to)
     {
@@ -35,14 +34,13 @@ public class TriangleBoard(TriangleGeometry geometry)
             // Only add a peg if it's surrounded AND we haven't already created one there
             if (IsTriangleSurrounded(triangle) && !_pegs.Any(p => p.Position == triangle))
             {
-                var piece = new Piece(triangle, _currentColor);
+                var piece = new Piece(triangle, _colorRotation[_currentColorIndex]);
                 _pegs.Add(piece);
             }
         }
 
         // Rotate to the next player's color
-        _colorIndex = (_colorIndex + 1) % colorRotation.Length;
-        _currentColor = colorRotation[_colorIndex];
+        _currentColorIndex = (_currentColorIndex + 1) % _colorRotation.Length;
     }
 
     /// <summary>
