@@ -12,7 +12,9 @@ builder.Services.AddControllers(options =>
 });
 
 // Register shared services
-builder.Services.AddSingleton(new TriangleGeometry(9, 50, 20, 20));
+var geometry = new TriangleGeometry(9, 50, 20, 20);
+builder.Services.AddSingleton(geometry);
+builder.Services.AddSingleton<TriangleGrid>(geometry);
 builder.Services.AddSingleton<TriangleBoard>();
 
 // Allow synchronous IO for SVG generation
