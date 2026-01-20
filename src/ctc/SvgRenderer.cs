@@ -80,7 +80,7 @@ public record SvgRenderer(TriangleGeometry Geometry)
     {
         foreach (var peg in pegs)
         {
-            var style = string.IsNullOrEmpty(peg.Tag) ? "" : $"""style="fill:{peg.Tag}" """;
+            var style = string.IsNullOrEmpty(peg.Color) || peg.Color == "white" ? "" : $"""style="fill:{peg.Color}" """;
             var px = Geometry.GetTriangleCenter(peg.Position);
             writer.WriteLine($"""    <circle class="peg" {style} r="10" cx="{px.X:f0}" cy="{px.Y:f0}" onclick="select(evt)"/>""");
 

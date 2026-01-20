@@ -96,6 +96,7 @@ button:hover {
     stroke: white;
     stroke-width: 4;
     stroke-linecap: round;
+    pointer-events: none;
 }
 
 .peg {

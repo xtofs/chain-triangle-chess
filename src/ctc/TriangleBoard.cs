@@ -4,9 +4,15 @@ public class TriangleBoard(TriangleGeometry geometry)
 {
     private List<(Vertex, Vertex)> _bands = [];
     private List<Piece> _pegs = [];
+    private string _currentColor = "red";
 
     public IReadOnlyList<(Vertex, Vertex)> Bands => _bands;
     public IReadOnlyList<Piece> Pegs => _pegs;
+    public string CurrentColor
+    {
+        get => _currentColor;
+        set => _currentColor = value;
+    }
 
     public void AddBand(Vertex from, Vertex to)
     {
@@ -26,10 +32,13 @@ public class TriangleBoard(TriangleGeometry geometry)
             // Only add a peg if it's surrounded AND we haven't already created one there
             if (IsTriangleSurrounded(triangle) && !_pegs.Any(p => p.Position == triangle))
             {
-                var piece = new Piece(triangle);
+                var piece = new Piece(triangle, _currentColor);
                 _pegs.Add(piece);
             }
         }
+
+        // Toggle to the other player's color
+        _currentColor = _currentColor == "red" ? "blue" : "red";
     }
 
     /// <summary>
