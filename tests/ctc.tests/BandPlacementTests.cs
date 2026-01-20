@@ -4,12 +4,12 @@ using Xunit;
 
 namespace ctc.Tests;
 
-public class DebugBandPlacementTests
+public class BandPlacementTests
 {
     private readonly TriangleGeometry _geometry;
     private readonly TriangleBoard _board;
 
-    public DebugBandPlacementTests()
+    public BandPlacementTests()
     {
         _geometry = new TriangleGeometry(9, 50, 20, 20);
         var grid = new TriangleGrid(9);

@@ -12,7 +12,8 @@ public class TriangleBoardTests
     public TriangleBoardTests()
     {
         _geometry = new TriangleGeometry(9, 50, 20, 20);
-        _board = new TriangleBoard(_geometry);
+        var grid = new TriangleGrid(9);
+        _board = new TriangleBoard(grid);
     }
 
     [Fact]

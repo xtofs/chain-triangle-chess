@@ -154,4 +154,9 @@ public class TriangleBoard(TriangleGrid grid)
         }
         return false;
     }
+
+    public IEnumerable<Vertex> GetReachableVertices(Vertex from)
+    {
+        return _grid.GetReachableVertices(from);
+    }
 }

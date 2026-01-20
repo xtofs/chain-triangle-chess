@@ -6,23 +6,36 @@ using Models;
 
 /// <summary>
 /// Handles rendering of a triangular grid to pixel coordinates.
-/// Inherits the logical grid operations from TriangleGrid.
+/// Composes a TriangleGrid for logical operations and adds rendering-specific logic.
 /// </summary>
-public class TriangleGeometry : TriangleGrid
+public class TriangleGeometry
 {
+    private readonly TriangleGrid _grid;
+
+    public int Size => _grid.Size;
+    public IEnumerable<Position> TrianglePositions => _grid.TrianglePositions;
+
     public float Spacing { get; }
     public float OffsetX { get; }
     public float OffsetY { get; }
 
     private readonly float triangleHeight;
 
-    public TriangleGeometry(int size, float spacing, float offsetX, float offsetY) : base(size)
+    public TriangleGeometry(int size, float spacing, float offsetX, float offsetY)
     {
+        _grid = new TriangleGrid(size);
         Spacing = spacing;
         OffsetX = offsetX;
         OffsetY = offsetY;
         triangleHeight = spacing * MathF.Sqrt(3) / 2f;
     }
+
+    // Delegate logical grid operations
+    public Vertex[] GetTriangleVertices(Position triangle) => _grid.GetTriangleVertices(triangle);
+    public bool HasEdge(Vertex[] vertices, Vertex v1, Vertex v2) => _grid.HasEdge(vertices, v1, v2);
+    public IEnumerable<Vertex> GetAdjacentVertices(Vertex v) => _grid.GetAdjacentVertices(v);
+    public IEnumerable<Vertex> GetReachableVertices(Vertex from) => _grid.GetReachableVertices(from);
+    public bool IsValidVertex(Vertex v) => _grid.IsValidVertex(v);
 
     /// <summary>
     /// Convert a vertex coordinate to pixel coordinates.
