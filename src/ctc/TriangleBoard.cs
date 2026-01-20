@@ -4,6 +4,9 @@ public class TriangleBoard(TriangleGeometry geometry)
 {
     private List<(Vertex, Vertex)> _bands = [];
     private List<Piece> _pegs = [];
+
+    static readonly string[] colorRotation = ["red", "blue", "green"];
+    private int _colorIndex = 0;
     private string _currentColor = "red";
 
     public IReadOnlyList<(Vertex, Vertex)> Bands => _bands;
@@ -37,8 +40,9 @@ public class TriangleBoard(TriangleGeometry geometry)
             }
         }
 
-        // Toggle to the other player's color
-        _currentColor = _currentColor == "red" ? "blue" : "red";
+        // Rotate to the next player's color
+        _colorIndex = (_colorIndex + 1) % colorRotation.Length;
+        _currentColor = colorRotation[_colorIndex];
     }
 
     /// <summary>
