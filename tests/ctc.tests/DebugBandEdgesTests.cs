@@ -46,7 +46,7 @@ public class DebugBandEdgesTests
     {
         // What are the three edges of triangle (4,4)?
         var tri = new Position(4, 4);
-        var verts = _board.GetTriangleVertices(tri);
+        var verts = _geometry.GetTriangleVertices(tri);
 
         var output = $"Triangle {tri}: {verts[0]}, {verts[1]}, {verts[2]}\n";
         output += "Edges:\n";

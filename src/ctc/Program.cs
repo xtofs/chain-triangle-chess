@@ -46,9 +46,9 @@ app.MapPost("/api/place-band/{vertex1}/{vertex2}", PlaceBand);
 
 app.Run();
 
-IResult GetReachableVertices(Vertex vertex, TriangleBoard board)
+IResult GetReachableVertices(Vertex vertex, ITriangleGrid grid)
 {
-    var reachable = board.GetReachableVertices(vertex);
+    var reachable = grid.GetReachableVertices(vertex);
     return Results.Json(reachable.Select(v => new { v.Row, v.Col }));
 }
 

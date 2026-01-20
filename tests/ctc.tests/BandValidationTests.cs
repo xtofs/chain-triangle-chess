@@ -19,7 +19,7 @@ public class BandValidationTests
     {
         // Starting from (2,1), what vertices are exactly 3 hops away?
         var from = new Vertex(2, 1);
-        var reachable = _board.GetReachableVertices(from).ToList();
+        var reachable = _geometry.GetReachableVertices(from).ToList();
 
         // All reachable vertices must form a valid band (be adjacent to another vertex in the path)
         // For now, just verify the list is not empty
@@ -66,7 +66,7 @@ public class BandValidationTests
                 continue;
 
             // Get adjacent vertices
-            var adjacent = _board.GetAdjacentVertices(current);
+            var adjacent = _geometry.GetAdjacentVertices(current);
             foreach (var next in adjacent)
             {
                 if (!visited.Contains(next))

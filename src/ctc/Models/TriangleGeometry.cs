@@ -4,29 +4,38 @@ using System.Drawing;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-public class TriangleGeometry(int size, float spacing, float offsetX, float offsetY)
+/// <summary>
+/// Handles rendering of a triangular grid to pixel coordinates.
+/// Composes a TriangleGrid for logical operations.
+/// </summary>
+public class TriangleGeometry : ITriangleGrid
 {
-    public int Size { get; } = size;
-    public float Spacing { get; } = spacing;
-    public float OffsetX { get; } = offsetX;
-    public float OffsetY { get; } = offsetY;
+    private readonly TriangleGrid _grid;
 
-    private readonly float triangleHeight = spacing * MathF.Sqrt(3) / 2f;
+    public int Size => _grid.Size;
+    public IEnumerable<Position> TrianglePositions => _grid.TrianglePositions;
 
-    public IEnumerable<Position> TrianglePositions
+    public float Spacing { get; }
+    public float OffsetX { get; }
+    public float OffsetY { get; }
+
+    private readonly float triangleHeight;
+
+    public TriangleGeometry(int size, float spacing, float offsetX, float offsetY)
     {
-        get
-        {
-            // enumerate compact positions: for each row, indices 0..2*row
-            for (int row = 0; row < Size; row++)
-            {
-                for (int index = 0; index <= 2 * row; index++)
-                {
-                    yield return new Position(row, index);
-                }
-            }
-        }
+        _grid = new TriangleGrid(size);
+        Spacing = spacing;
+        OffsetX = offsetX;
+        OffsetY = offsetY;
+        triangleHeight = spacing * MathF.Sqrt(3) / 2f;
     }
+
+    // Delegate logical grid operations to the grid
+    public Vertex[] GetTriangleVertices(Position triangle) => _grid.GetTriangleVertices(triangle);
+    public bool HasEdge(Vertex[] vertices, Vertex v1, Vertex v2) => _grid.HasEdge(vertices, v1, v2);
+    public IEnumerable<Vertex> GetAdjacentVertices(Vertex v) => _grid.GetAdjacentVertices(v);
+    public IEnumerable<Vertex> GetReachableVertices(Vertex from) => _grid.GetReachableVertices(from);
+    public bool IsValidVertex(Vertex v) => _grid.IsValidVertex(v);
 
     /// <summary>
     /// Convert a vertex coordinate to pixel coordinates.
@@ -60,22 +69,10 @@ public class TriangleGeometry(int size, float spacing, float offsetX, float offs
     {
         var result = new Vector2[3];
 
-        var row = triangle.Row;
-        var index = triangle.Index;
-        var col = index / 2;
-
-        if (triangle.PointUp)
-        {
-            result[0] = VertexToPixel(new Vertex(row, col));
-            result[1] = VertexToPixel(new Vertex(row + 1, col));
-            result[2] = VertexToPixel(new Vertex(row + 1, col + 1));
-        }
-        else
-        {
-            result[0] = VertexToPixel(new Vertex(row, col + 1));
-            result[1] = VertexToPixel(new Vertex(row, col));
-            result[2] = VertexToPixel(new Vertex(row + 1, col + 1));
-        }
+        var vertices = GetTriangleVertices(triangle);
+        result[0] = VertexToPixel(vertices[0]);
+        result[1] = VertexToPixel(vertices[1]);
+        result[2] = VertexToPixel(vertices[2]);
 
         return result;
     }
