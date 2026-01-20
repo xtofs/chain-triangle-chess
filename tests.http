@@ -2,4 +2,4 @@
 GET http://localhost:5000/api/board
 
 ###
-GET  http://localhost:5000/api/game
+GET http://localhost:5000/api/game

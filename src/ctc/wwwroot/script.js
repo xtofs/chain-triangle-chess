@@ -1,14 +1,67 @@
-let selected = undefined;
+let selectedVertex = undefined;
+let reachableVertices = new Set();
 
-function select(evt) {
-    var target = evt.target;
-    var next = target == selected ? undefined : target;
-    var prev = selected;
+// Handle vertex hit zone clicks - implement two-step selection
+function onVertexClick(hitZoneElement) {
+    // Get the vertex data from the hit zone's attributes
+    const row = parseInt(hitZoneElement.getAttribute('data-row'));
+    const col = parseInt(hitZoneElement.getAttribute('data-col'));
+    const vertexStr = `${row},${col}`;
 
-    prev?.classList.remove('selected');
-    next?.classList.add('selected');
+    // Find the actual vertex circle (previous sibling)
+    let vertexCircle = hitZoneElement.previousElementSibling;
+    while (vertexCircle && !vertexCircle.classList.contains('vertex')) {
+        vertexCircle = vertexCircle.previousElementSibling;
+    }
 
-    selected = next;
+    if (!vertexCircle) return;
+
+    if (!selectedVertex) {
+        // First click: select this vertex and fetch reachable vertices
+        selectedVertex = { row, col, element: vertexCircle };
+        vertexCircle.classList.add('selected');
+
+        // Fetch reachable vertices from server
+        fetch(`/api/reachable/${vertexStr}`)
+            .then(r => r.json())
+            .then(vertices => {
+                reachableVertices = new Set(vertices.map(v => `${v.row},${v.col}`));
+                // Highlight reachable vertices
+                document.querySelectorAll('.vertex').forEach(v => {
+                    if (v === vertexCircle) return; // Skip the selected vertex itself
+                    if (reachableVertices.has(`${v.getAttribute('data-row')},${v.getAttribute('data-col')}`)) {
+                        v.classList.add('reachable');
+                    }
+                });
+            });
+    } else {
+        // Second click: check if this is a reachable vertex
+        if (reachableVertices.has(vertexStr)) {
+            // Place the band
+            const from = `${selectedVertex.row},${selectedVertex.col}`;
+            fetch(`/api/place-band/${from}/${vertexStr}`, { method: 'POST' })
+                .then(() => {
+                    // Clear selection and reload board
+                    clearSelection();
+                    htmx.ajax('GET', '/api/game', { target: '#board-dynamic', swap: 'none' });
+                });
+        } else {
+            // Not reachable, deselect or select this vertex instead
+            clearSelection();
+            onVertexClick(hitZoneElement);
+        }
+    }
+}
+
+function clearSelection() {
+    if (selectedVertex) {
+        selectedVertex.element.classList.remove('selected');
+        selectedVertex = undefined;
+    }
+    document.querySelectorAll('.vertex.reachable').forEach(v => {
+        v.classList.remove('reachable');
+    });
+    reachableVertices.clear();
 }
 
 // Handle vertex selection via HTMX

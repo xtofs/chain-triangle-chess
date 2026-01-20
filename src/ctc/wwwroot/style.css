@@ -62,6 +62,10 @@ button:hover {
     fill: hotpink;
 }
 
+.vertex.reachable {
+    fill: gold;
+}
+
 .vertex-hit {
     fill: transparent;
     cursor: pointer;

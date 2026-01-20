@@ -10,6 +10,10 @@ builder.Services.AddControllers(options =>
     options.ModelBinderProviders.Insert(0, new VertexModelBinderProvider());
 });
 
+// Register shared services
+builder.Services.AddSingleton(new TriangleGeometry(9, 50, 20, 20));
+builder.Services.AddSingleton<TriangleBoard>();
+
 // Allow synchronous IO for SVG generation
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
@@ -32,53 +36,44 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = ""
 });
 
-app.MapGet("/api/board", GenerateStaticSvg);
+app.MapGet("/api/board", GetBoard);
 
-app.MapGet("/api/game", GenerateDynamicSvg);
+app.MapGet("/api/game", GetGame);
 
-app.MapPost("/api/select/{vertex}", HandleVertexSelect);
+app.MapGet("/api/reachable/{vertex}", GetReachableVertices);
+
+app.MapPost("/api/place-band/{vertex1}/{vertex2}", PlaceBand);
 
 app.Run();
 
-IResult HandleVertexSelect(Vertex vertex)
+IResult GetReachableVertices(Vertex vertex, TriangleBoard board)
 {
-    Console.WriteLine(vertex);
-    // Just return 200 OK - the frontend will handle visual update via HTMX events
+    var reachable = board.GetReachableVertices(vertex);
+    return Results.Json(reachable.Select(v => new { v.Row, v.Col }));
+}
+
+IResult PlaceBand(Vertex vertex1, Vertex vertex2, TriangleBoard board)
+{
+    Console.WriteLine($"Placing band from {vertex1} to {vertex2}");
+    board.AddBand(vertex1, vertex2);
     return Results.Ok();
 }
 
-IResult GenerateStaticSvg()
+IResult GetBoard(TriangleGeometry geom)
 {
-    var geom = new TriangleGeometry(9, 50, 20, 20);
     var renderer = new SvgRenderer(geom);
 
-    return Results.Stream(async (stream) =>
-    {
-        await renderer.RenderStatic(stream);
-    }, contentType: "image/svg+xml");
+    return Results.Stream(renderer.RenderBoard, contentType: "image/svg+xml");
 }
 
-IResult GenerateDynamicSvg()
+IResult GetGame(TriangleGeometry geom, TriangleBoard board)
 {
-    var geom = new TriangleGeometry(9, 50, 20, 20);
     var renderer = new SvgRenderer(geom);
 
-    var bands = new (Vertex, Vertex)[]
+    async Task Action(Stream stream)
     {
-        ((1,1), (4,4)),
-        ((4,2), (7,2)),
-        ((6,1), (6,4)),
-        ((5,0), (8,3)),
-    };
+        await renderer.RenderGame(stream, board);
+    }
 
-    var pegs = new Piece[]
-    {
-        (6, 3, "red"),
-    };
-    var game = new TriangleBoard(bands, pegs);
-
-    return Results.Stream(async (stream) =>
-    {
-        await renderer.RenderDynamic(stream, game);
-    }, contentType: "image/svg+xml");
+    return Results.Stream(Action, contentType: "image/svg+xml");
 }

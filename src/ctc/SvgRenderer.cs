@@ -2,7 +2,7 @@ using Models;
 
 public record SvgRenderer(TriangleGeometry Geometry)
 {
-    public async Task RenderStatic(Stream output)
+    public async Task RenderBoard(Stream output)
     {
         using var writer = new StreamWriter(output, leaveOpen: true);
 
@@ -13,7 +13,7 @@ public record SvgRenderer(TriangleGeometry Geometry)
         await writer.FlushAsync();
     }
 
-    public async Task RenderDynamic(Stream output, TriangleBoard game)
+    public async Task RenderGame(Stream output, TriangleBoard game)
     {
         using var writer = new StreamWriter(output, leaveOpen: true);
 
@@ -41,7 +41,7 @@ public record SvgRenderer(TriangleGeometry Geometry)
         }
     }
 
-    private void DrawBands(StreamWriter writer, (Vertex, Vertex)[] bands)
+    private void DrawBands(StreamWriter writer, IReadOnlyList<(Vertex, Vertex)> bands)
     {
         foreach (var band in bands)
         {
@@ -59,9 +59,9 @@ public record SvgRenderer(TriangleGeometry Geometry)
         foreach (var vertex in GetVertices(Geometry.Size))
         {
             var px = Geometry.VertexToPixel(vertex);
-            writer.WriteLine($"""    <circle class="vertex" r="4" cx="{px.X:f0}" cy="{px.Y:f0}"/>""");
+            writer.WriteLine($"""    <circle class="vertex" r="4" cx="{px.X:f0}" cy="{px.Y:f0}" data-row="{vertex.Row}" data-col="{vertex.Col}"/>""");
             // Invisible clickable hit zone (larger than visible vertex)
-            writer.WriteLine($"""    <circle class="vertex-hit" r="16" cx="{px.X:f0}" cy="{px.Y:f0}" hx-post="/api/select/{vertex.Row},{vertex.Col}" hx-swap="none"/>""");
+            writer.WriteLine($"""    <circle class="vertex-hit" r="16" cx="{px.X:f0}" cy="{px.Y:f0}" data-row="{vertex.Row}" data-col="{vertex.Col}" onclick="onVertexClick(this)"/>""");
         }
     }
 
@@ -76,7 +76,7 @@ public record SvgRenderer(TriangleGeometry Geometry)
         }
     }
 
-    private void DrawPegs(StreamWriter writer, Piece[] pegs)
+    private void DrawPegs(StreamWriter writer, IReadOnlyList<Piece> pegs)
     {
         foreach (var peg in pegs)
         {
